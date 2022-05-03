@@ -29,17 +29,103 @@ SHH6 = CreateSeuratObject(counts = SHH6, project = "shh6", min.features = 200, m
 SHH7 = CreateSeuratObject(counts = SHH7, project = "shh7", min.features = 200, min.cells = 3)
 SHH8 = CreateSeuratObject(counts = SHH8, project = "shh8", min.features = 200, min.cells = 3)
 
-##scrublet results into seurat obj
-doublet.file <- "../#SHH1-8/scrublet.doublet_scores_obs.txt"
+##scrublet results into seurat obj(SHH1 - SHH8)
+
+#SHH1
+doublet.file <- "../SHH1/scrublet.doublet_scores_obs.txt"
 doublet.df <- read.table(doublet.file , header = F, sep = "\t")
 colnames(doublet.df) <- c("barcodes", "scores", "threshold")
 doublet.df$Doublet <- "singlet"
 doublet.df$Doublet[doublet.df$scores > doublet.df$threshold] <- "doublet"
 doublet.df$barcodes <- do.call(rbind, strsplit(x = as.character(doublet.df$barcodes), split = "\\-"))
-metadata = data.frame(barcodes = rownames(#SHH1-8@meta.data), #SHH1-8@meta.data)
+metadata = data.frame(barcodes = rownames(SHH1@meta.data), SHH1@meta.data)
 metadata$barcodes = do.call(rbind, strsplit(rownames(metadata), split = '\\-'))
 test <- join(metadata, doublet.df, by = "barcodes")
-#SHH1-8@meta.data$Doublet <- test$Doublet
+SHH1@meta.data$Doublet <- test$Doublet
+
+#SHH2
+doublet.file <- "../SHH2/scrublet.doublet_scores_obs.txt"
+doublet.df <- read.table(doublet.file , header = F, sep = "\t")
+colnames(doublet.df) <- c("barcodes", "scores", "threshold")
+doublet.df$Doublet <- "singlet"
+doublet.df$Doublet[doublet.df$scores > doublet.df$threshold] <- "doublet"
+doublet.df$barcodes <- do.call(rbind, strsplit(x = as.character(doublet.df$barcodes), split = "\\-"))
+metadata = data.frame(barcodes = rownames(SHH2@meta.data), SHH2@meta.data)
+metadata$barcodes = do.call(rbind, strsplit(rownames(metadata), split = '\\-'))
+test <- join(metadata, doublet.df, by = "barcodes")
+SHH2@meta.data$Doublet <- test$Doublet
+
+#SHH3
+doublet.file <- "../SHH3/scrublet.doublet_scores_obs.txt"
+doublet.df <- read.table(doublet.file , header = F, sep = "\t")
+colnames(doublet.df) <- c("barcodes", "scores", "threshold")
+doublet.df$Doublet <- "singlet"
+doublet.df$Doublet[doublet.df$scores > doublet.df$threshold] <- "doublet"
+doublet.df$barcodes <- do.call(rbind, strsplit(x = as.character(doublet.df$barcodes), split = "\\-"))
+metadata = data.frame(barcodes = rownames(SHH3@meta.data), SHH3@meta.data)
+metadata$barcodes = do.call(rbind, strsplit(rownames(metadata), split = '\\-'))
+test <- join(metadata, doublet.df, by = "barcodes")
+SHH3@meta.data$Doublet <- test$Doublet
+
+#SHH4
+doublet.file <- "../SHH4/scrublet.doublet_scores_obs.txt"
+doublet.df <- read.table(doublet.file , header = F, sep = "\t")
+colnames(doublet.df) <- c("barcodes", "scores", "threshold")
+doublet.df$Doublet <- "singlet"
+doublet.df$Doublet[doublet.df$scores > doublet.df$threshold] <- "doublet"
+doublet.df$barcodes <- do.call(rbind, strsplit(x = as.character(doublet.df$barcodes), split = "\\-"))
+metadata = data.frame(barcodes = rownames(SHH4@meta.data), SHH4@meta.data)
+metadata$barcodes = do.call(rbind, strsplit(rownames(metadata), split = '\\-'))
+test <- join(metadata, doublet.df, by = "barcodes")
+SHH4@meta.data$Doublet <- test$Doublet
+
+#SHH5
+doublet.file <- "../SHH5/scrublet.doublet_scores_obs.txt"
+doublet.df <- read.table(doublet.file , header = F, sep = "\t")
+colnames(doublet.df) <- c("barcodes", "scores", "threshold")
+doublet.df$Doublet <- "singlet"
+doublet.df$Doublet[doublet.df$scores > doublet.df$threshold] <- "doublet"
+doublet.df$barcodes <- do.call(rbind, strsplit(x = as.character(doublet.df$barcodes), split = "\\-"))
+metadata = data.frame(barcodes = rownames(SHH5@meta.data), SHH5@meta.data)
+metadata$barcodes = do.call(rbind, strsplit(rownames(metadata), split = '\\-'))
+test <- join(metadata, doublet.df, by = "barcodes")
+SHH5@meta.data$Doublet <- test$Doublet
+
+#SHH6
+doublet.file <- "../SHH6/scrublet.doublet_scores_obs.txt"
+doublet.df <- read.table(doublet.file , header = F, sep = "\t")
+colnames(doublet.df) <- c("barcodes", "scores", "threshold")
+doublet.df$Doublet <- "singlet"
+doublet.df$Doublet[doublet.df$scores > doublet.df$threshold] <- "doublet"
+doublet.df$barcodes <- do.call(rbind, strsplit(x = as.character(doublet.df$barcodes), split = "\\-"))
+metadata = data.frame(barcodes = rownames(SHH6@meta.data), SHH6@meta.data)
+metadata$barcodes = do.call(rbind, strsplit(rownames(metadata), split = '\\-'))
+test <- join(metadata, doublet.df, by = "barcodes")
+SHH6@meta.data$Doublet <- test$Doublet
+
+#SHH7
+doublet.file <- "../SHH7/scrublet.doublet_scores_obs.txt"
+doublet.df <- read.table(doublet.file , header = F, sep = "\t")
+colnames(doublet.df) <- c("barcodes", "scores", "threshold")
+doublet.df$Doublet <- "singlet"
+doublet.df$Doublet[doublet.df$scores > doublet.df$threshold] <- "doublet"
+doublet.df$barcodes <- do.call(rbind, strsplit(x = as.character(doublet.df$barcodes), split = "\\-"))
+metadata = data.frame(barcodes = rownames(SHH7@meta.data), SHH7@meta.data)
+metadata$barcodes = do.call(rbind, strsplit(rownames(metadata), split = '\\-'))
+test <- join(metadata, doublet.df, by = "barcodes")
+SHH7@meta.data$Doublet <- test$Doublet
+
+#SHH8
+doublet.file <- "../SHH8/scrublet.doublet_scores_obs.txt"
+doublet.df <- read.table(doublet.file , header = F, sep = "\t")
+colnames(doublet.df) <- c("barcodes", "scores", "threshold")
+doublet.df$Doublet <- "singlet"
+doublet.df$Doublet[doublet.df$scores > doublet.df$threshold] <- "doublet"
+doublet.df$barcodes <- do.call(rbind, strsplit(x = as.character(doublet.df$barcodes), split = "\\-"))
+metadata = data.frame(barcodes = rownames(SHH8@meta.data), SHH8@meta.data)
+metadata$barcodes = do.call(rbind, strsplit(rownames(metadata), split = '\\-'))
+test <- join(metadata, doublet.df, by = "barcodes")
+SHH8@meta.data$Doublet <- test$Doublet
 
 merge12 = merge(SHH1, SHH2, add.cell.id = c('shh1','shh2'))
 merge34 = merge(SHH3, SHH4, add.cell.id = c('shh3','shh4'))
