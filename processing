@@ -1,0 +1,65 @@
+#### Make GRCm39 reference genome with tdTomato gene inserted
+echo -e 'tdTomato\tunknown\texon\t1\t1431\t.\t+\t.\tgene_id "tdTomato"; transcript_id "tdTomato"; gene_name "tdTomato"; gene_biotype "protein_coding";' > tdTomato.gtf
+cat tdTomato.fa >> Mus_musculus.GRCm39.dna.primary_assembly.fa
+cat tdTomato.gtf >> Mus_musculus.GRCm39.104.filtered.gtf
+cellranger mkref --genome=tdTomato_GRCm39 --fasta=Mus_musculus.GRCm39.dna.primary_assembly.fa --genes=Mus_musculus.GRCm39.104.filtered.gtf
+
+##### sample info
+SHH1 : NDUFS2 cKO male1
+SHH2 : NDUFS2 cKO female1
+SHH3 : NDUFS2 control female1
+SHH4 : NDUFS2 control female2
+SHH5 : NDUFS2 cKO female2
+SHH6 : NDUFS2 control male1
+SHH7 : NDUFS2 control male2
+SHH8 : NDUFS2 cKO male2
+
+#### Align onto GRCm39 reference genome with tdTomato gene inserted
+cellranger count --id=SHH1 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH1 --sample=SHH1 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH2 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH2 --sample=SHH2 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH3 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH3 --sample=SHH3 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH4 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH4 --sample=SHH4 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH5 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH5 --sample=SHH5 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH6 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH6 --sample=SHH6 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH7 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH7 --sample=SHH7 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH8 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH8 --sample=SHH8 --transcriptome=../tdTomato_GRCm39/
+
+### scrublet python code
+import sys
+import os
+import scrublet as scr
+import scipy.io
+import numpy as np
+import pandas as pd
+from os.path import expanduser
+
+home = expanduser("~")
+input_dir = '../#SHH1-8/outs/filtered_feature_bc_matrix'
+out_dir = '../#SHH1-8'
+
+counts_matrix = scipy.io.mmread(input_dir + '/matrix.mtx').T.tocsc()
+genes = np.array(scr.load_genes(input_dir + '/features.tsv', delimiter = '\t', column = 1))
+barcodes = np.loadtxt(input_dir + '/barcodes.tsv', dtype = 'str')
+
+scrub = scr.Scrublet(counts_matrix, expected_doublet_rate = 0.06)
+doublet_scores, predicted_doublets = scrub.scrub_doublets(min_counts = 2, min_cells = 3, min_gene_variability_pctl = 85, n_prin_comps = 30)
+         
+scrub_obs = pd.DataFrame({ "barcodes" : barcodes, "doublet_scores_obs" : scrub.doublet_scores_obs_, "threshold" : scrub.threshold_})
+scrub_sim = pd.DataFrame({ "doublet_scores_sim" : scrub.doublet_scores_sim_, "threshold" : scrub.threshold_})
+             
+scrub_obs.to_csv(out_dir + "/scrublet.doublet_scores_obs.txt", index = False, header = None, sep = "\t")
+scrub_sim.to_csv(out_dir + "/scrublet.doublet_scores_sim.txt", index = False, header = None, sep = "\t")
+
+
+## scrublet in R
+```{r}
+cellranger.dir = '../#SHH1-8/outs/filtered_feature_bc_matrix'
+scrublet.script <- '../run_scrublet.py'
+outdir <- "../#SHH1-8"
+
+system(paste("../anaconda3/bin/python", scrublet.script, cellranger.dir, outdir, sep = " "))
+
+db.score <- read.table(file = paste0(outdir, "/scrublet.doublet_scores_obs.txt"), header = F, sep = "\t")
+colnames(db.score) <- c("barcodes", "scores", "threshold")
+```
+
