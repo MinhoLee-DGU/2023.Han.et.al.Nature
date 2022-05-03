@@ -24,7 +24,7 @@ cellranger count --id=SHH6 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH6 --sample=S
 cellranger count --id=SHH7 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH7 --sample=SHH7 --transcriptome=../tdTomato_GRCm39/
 cellranger count --id=SHH8 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH8 --sample=SHH8 --transcriptome=../tdTomato_GRCm39/
 
-### scrublet python code
+### scrublet python code (SHH1 - SHH8)
 import sys
 import os
 import scrublet as scr
@@ -51,7 +51,7 @@ scrub_obs.to_csv(out_dir + "/scrublet.doublet_scores_obs.txt", index = False, he
 scrub_sim.to_csv(out_dir + "/scrublet.doublet_scores_sim.txt", index = False, header = None, sep = "\t")
 
 
-## scrublet in R
+## scrublet in R (SHH1 - SHH8)
 ```{r}
 cellranger.dir = '../#SHH1-8/outs/filtered_feature_bc_matrix'
 scrublet.script <- '../run_scrublet.py'
