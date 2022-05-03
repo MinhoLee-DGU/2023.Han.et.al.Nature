@@ -1,0 +1,177 @@
+## whole cluster analysis
+```{r}
+library(dplyr)
+library(Seurat)
+library(patchwork)
+library(ggplot2)
+library(dittoSeq)
+library(pylr)
+library(UCell)
+library(Matrix)
+library(ggpubr)
+set.seed(123)
+
+SHH1 = Read10X('./SHH1/outs/filtered_feature_bc_matrix')
+SHH2 = Read10X('./SHH2/outs/filtered_feature_bc_matrix')
+SHH3 = Read10X('./SHH3/outs/filtered_feature_bc_matrix')
+SHH4 = Read10X('./SHH4/outs/filtered_feature_bc_matrix')
+SHH5 = Read10X('./SHH5/outs/filtered_feature_bc_matrix')
+SHH6 = Read10X('./SHH6/outs/filtered_feature_bc_matrix')
+SHH7 = Read10X('./SHH7/outs/filtered_feature_bc_matrix')
+SHH8 = Read10X('./SHH8/outs/filtered_feature_bc_matrix')
+
+SHH1 = CreateSeuratObject(counts = SHH1, project = "shh1", min.features = 200, min.cells = 3)
+SHH2 = CreateSeuratObject(counts = SHH2, project = "shh2", min.features = 200, min.cells = 3)
+SHH3 = CreateSeuratObject(counts = SHH3, project = "shh3", min.features = 200, min.cells = 3)
+SHH4 = CreateSeuratObject(counts = SHH4, project = "shh4", min.features = 200, min.cells = 3)
+SHH5 = CreateSeuratObject(counts = SHH5, project = "shh5", min.features = 200, min.cells = 3)
+SHH6 = CreateSeuratObject(counts = SHH6, project = "shh6", min.features = 200, min.cells = 3)
+SHH7 = CreateSeuratObject(counts = SHH7, project = "shh7", min.features = 200, min.cells = 3)
+SHH8 = CreateSeuratObject(counts = SHH8, project = "shh8", min.features = 200, min.cells = 3)
+
+##scrublet results into seurat obj
+doublet.file <- "../#SHH1-8/scrublet.doublet_scores_obs.txt"
+doublet.df <- read.table(doublet.file , header = F, sep = "\t")
+colnames(doublet.df) <- c("barcodes", "scores", "threshold")
+doublet.df$Doublet <- "singlet"
+doublet.df$Doublet[doublet.df$scores > doublet.df$threshold] <- "doublet"
+doublet.df$barcodes <- do.call(rbind, strsplit(x = as.character(doublet.df$barcodes), split = "\\-"))
+metadata = data.frame(barcodes = rownames(#SHH1-8@meta.data), #SHH1-8@meta.data)
+metadata$barcodes = do.call(rbind, strsplit(rownames(metadata), split = '\\-'))
+test <- join(metadata, doublet.df, by = "barcodes")
+#SHH1-8@meta.data$Doublet <- test$Doublet
+
+merge12 = merge(SHH1, SHH2, add.cell.id = c('shh1','shh2'))
+merge34 = merge(SHH3, SHH4, add.cell.id = c('shh3','shh4'))
+merge56 = merge(SHH5, SHH6, add.cell.id = c('shh5','shh6'))
+merge78 = merge(SHH7, SHH8, add.cell.id = c('shh7','shh8'))
+merge1234 = merge(merge12, merge34)
+merge5678 = merge(merge56, merge78)
+merge = merge(merge1234, merge5678)
+
+merge[["percent.mt"]] <- PercentageFeatureSet(merge, pattern = "^mt-")
+
+merge@meta.data$state = merge@meta.data$orig.ident %>% as.character
+merge@meta.data$state[merge@meta.data$state == 'SHH1'] = 'NDUFS2 cKO'
+merge@meta.data$state[merge@meta.data$state == 'SHH2'] = 'NDUFS2 cKO'
+merge@meta.data$state[merge@meta.data$state == 'SHH5'] = 'NDUFS2 cKO'
+merge@meta.data$state[merge@meta.data$state == 'SHH8'] = 'NDUFS2 cKO'
+merge@meta.data$state[merge@meta.data$state == 'SHH3'] = 'NDUFS2 control'
+merge@meta.data$state[merge@meta.data$state == 'SHH4'] = 'NDUFS2 control'
+merge@meta.data$state[merge@meta.data$state == 'SHH6'] = 'NDUFS2 control'
+merge@meta.data$state[merge@meta.data$state == 'SHH7'] = 'NDUFS2 control'
+
+merge@meta.data$sample = merge@meta.data$orig.ident %>% as.character
+merge@meta.data$sample[merge@meta.data$sample == 'SHH1'] = 'NDUFS2 cKO M1'
+merge@meta.data$sample[merge@meta.data$sample == 'SHH2'] = 'NDUFS2 cKO F1'
+merge@meta.data$sample[merge@meta.data$sample == 'SHH5'] = 'NDUFS2 cKO F2'
+merge@meta.data$sample[merge@meta.data$sample == 'SHH8'] = 'NDUFS2 cKO M2'
+merge@meta.data$sample[merge@meta.data$sample == 'SHH3'] = 'NDUFS2 control F1'
+merge@meta.data$sample[merge@meta.data$sample == 'SHH4'] = 'NDUFS2 control F2'
+merge@meta.data$sample[merge@meta.data$sample == 'SHH6'] = 'NDUFS2 control M1'
+merge@meta.data$sample[merge@meta.data$sample == 'SHH7'] = 'NDUFS2 control M2'
+
+##Doublet 2409, Singlet 60657
+merge <- subset(x = merge, subset = Doublet == "singlet")
+
+##visualize nFeatrue_RNA & nCount_RNA & percent.mt
+VlnPlot(merge, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+merge_filter = subset(merge, subset = nFeature_RNA > 500 & percent.mt < 25)
+
+whole <- SCTransform(merge_filter, verbose = FALSE)
+whole <- RunPCA(whole, verbose = FALSE)
+
+## dims
+pct <- whole[["pca"]]@stdev / sum(whole[["pca"]]@stdev) * 100
+
+cumu <- cumsum(pct)
+co1 <- which(cumu > 90 & pct < 5)[1]
+co2 <- sort(which((pct[1:length(pct) - 1] - pct[2:length(pct)]) > 0.1), decreasing = T)[1] + 1
+pcs <- min(co1, co2)
+plot_df <- data.frame(pct = pct, cumu = cumu, rank = 1:length(pct))
+ 
+ggplot(plot_df, aes(cumu, pct, label = rank, color = rank > pcs)) +
+  geom_text() +
+  geom_vline(xintercept = 90, color = "grey") +
+  geom_hline(yintercept = min(pct[pct > 5]), color = "grey") +
+  theme_bw()
+
+whole <- RunUMAP(whole, dims = 1:22, verbose = FALSE)
+whole <- FindNeighbors(whole, dims = 1:22, verbose = FALSE)
+whole <- FindClusters(whole, verbose = FALSE, resolution = 0.6)
+DimPlot(whole, reduction = "umap", label = T, label.size = 6, repel = T)
+
+##Celltype annotation
+whole.marker <- FindAllMarkers(whole, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+
+whole = RenameIdents(whole,
+'0' = 'AT2', 
+'1' = 'B',
+'2' = 'gCap',
+'3' = 'T',
+'4' = 'B',
+'5' = 'FIB.1',
+'6' = 'MP',
+'7' = 'Transitional',
+'8' = 'gCap',
+'9' = 'Neutrophils',
+'10' = 'Art',
+'11' = 'CM',
+'12' = 'NCM',
+'13' = 'aCap',
+'14' = 'IM',
+'15' = 'DC.2',
+'16' = 'SM.2',
+'17' ='FIB.2',
+'18' ='ILC',
+'19' ='AT1',
+'20' ='SM.1',
+'21' ='NK',
+'22' ='CD8+T',
+'23' ='DC.1',
+'24'='Secretory & Ciliated',
+'25'='Neutrophils',
+'26'='Treg',
+'27'='Pl.DC',
+'28'='Mesothelium',
+'29'='Lymph EC',
+'30'='Pl.MP',
+'31'='Ccr7+DC'
+)
+
+whole@meta.data$chart = Idents(whole) %>% as.character
+
+saveRDS(whole, '../whole.rds')
+
+## whole clusters
+p = DimPlot(whole)
+LabelClusters(p,family = 'Arial', repel = T, size = 5, id = 'ident') +
+theme(plot.title = element_text(family = 'Arial'), legend.text = element_text(family = 'Arial')) + 
+theme(axis.title.x = element_text(family = 'Arial'), axis.title.y = element_text(family = 'Arial')) + 
+theme(axis.text.x = element_text( family = 'Arial'), axis.text.y = element_text(family = 'Arial')) +
+theme(legend.title = element_blank()) + NoLegend()
+
+## whole clusters split.by state
+DimPlot(whole, group = 'state', cols=c('#CF7C89', '#94D8F6')) +
+theme(plot.title = element_text(family = 'Arial'), legend.text = element_text(size=20, family = 'Arial')) + 
+theme(axis.title.x = element_text(family = 'Arial'), axis.title.y = element_text(family = 'Arial')) + 
+theme(axis.text.x = element_text( family = 'Arial'), axis.text.y = element_text(family = 'Arial')) +
+theme(legend.title = element_blank()) + theme(legend.position = c(0.02,0.95)) + guides(colour = guide_legend(override.aes = list(size=4))) + ggtitle('')
+
+## tdTomato expression
+FeaturePlot(whole, reduction = "umap", features = c('tdTomato'),  order = TRUE, label = F) +  theme(plot.title = element_text(face = 'italic',family = 'Arial'))
+
+## whole cluster ISR
+signatures = list(ISR = isr.genes)
+my.matrix = GetAssayData(object = whole, slot = "data", assay = 'SCT')
+u.scores = ScoreSignatures_UCell(my.matrix, features = signatures)
+whole = AddMetaData(whole, metadata = as.data.frame(u.scores))
+
+##ISR enrichment score
+ggplot(whole@meta.data, aes(x = chart, y = ISR_UCell)) + geom_violin(aes(fill = chart), scale = "width") + 
+geom_boxplot(width = 0.1) + theme_bw() + stat_compare_means(label.y = 0.32,label.x = 1, family = 'Arial',size = 5) +
+theme(plot.title = element_text(size = 20,family = 'Arial'), legend.text = element_text(size = 20,family = 'Arial')) + 
+theme(axis.title.x = element_text(size = 20,family = 'Arial'), axis.title.y = element_text(size = 20,family = 'Arial')) + 
+theme(axis.text.x = element_text(angle = 40, hjust = 1,size = 20, family = 'Arial'), axis.text.y = element_text(size = 20,family = 'Arial')) + NoLegend() + ylab('ISR score')
+```
