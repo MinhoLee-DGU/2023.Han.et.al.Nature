@@ -248,6 +248,12 @@ theme(legend.title = element_blank()) + theme(legend.position = c(0.02,0.95)) + 
 ## tdTomato expression
 FeaturePlot(whole, reduction = "umap", features = c('tdTomato'),  order = TRUE, label = F) +  theme(plot.title = element_text(face = 'italic',family = 'Arial'))
 
+## Ndfus2 expression in whole
+VlnPlot(whole, features=c('Ndufs2'), split.by = 'state', split.plot = F, group.by='chart', cols=c('#CF7C89', '#94D8F6'), slot = 'data', assay = 'SCT') + 
+theme(axis.text.x = element_text(angle = 40, hjust = 1, size=20,color="black", family = 'Arial'), axis.text.y = element_text(size = 20, family = 'Arial'), axis.title.y = element_text(size=20,family = 'Arial')) + 
+theme(plot.title = element_text(size = 24, face = 'italic', family = 'Arial')) + theme(strip.text.x = element_text(size = 20, family = 'Arial'), legend.text = element_text(size=20,family = 'Arial')) +
+xlab('')+ylab('Expression level')+ggtitle('Ndufs2')
+
 ## whole cluster ISR
 signatures = list(ISR = isr.genes)
 my.matrix = GetAssayData(object = whole, slot = "data", assay = 'SCT')
