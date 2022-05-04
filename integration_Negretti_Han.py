@@ -148,6 +148,19 @@ sc.tl.umap(sample)
 color = sample.uns['Cluster_colors']
 scv.pl.velocity_embedding_stream(sample, basis="umap", color=color, legend_loc = 'on data', legend_fontsize=12)
 
+# extract UMAP embedding
+sample.info = pd.DataFrame(sample.obs)
+umap = pd.DataFrame(sample.obsm['X_umap'])
+sample.info.to_csv('../integ_Neg_Han/sample.info.csv')
+umap.to_csv('../integ_Neg_Han/umap.csv')
+
+
+
+
+
+
+
+
 
 
 
