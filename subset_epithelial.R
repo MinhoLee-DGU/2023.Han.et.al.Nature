@@ -1,4 +1,3 @@
-```{r}
 library(dplyr)
 library(Seurat)
 library(patchwork)
@@ -184,7 +183,6 @@ theme(plot.title = element_text(size = 20,family = 'Arial'), legend.text = eleme
 theme(axis.title.x = element_text(size = 20,family = 'Arial'), axis.title.y = element_text(size = 20,family = 'Arial')) + 
 theme(axis.text.x = element_text(size = 20, family = 'Arial'), axis.text.y = element_text(size = 20,family = 'Arial')) +
 guides(color = guide_legend(override.aes = list(size=4)))
-```
 
 
 
