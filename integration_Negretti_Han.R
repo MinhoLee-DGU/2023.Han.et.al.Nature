@@ -58,7 +58,7 @@ write.csv(select(seurat@meta.data, project), '../integ_Neg_Han/project.csv')
 seurat[['umap']]@cell.embeddings = umap %>% as.matrix
 
 ## Dim plot
-p = DimPlot(seurat, group = 'chart')
+p = DimPlot(seurat, group = 'epi_celltype')
 LabelClusters(p,family = 'Arial', repel = T, size = 5, id = 'epi_celltype') +
 theme(plot.title = element_text(family = 'Arial'), legend.text = element_text(size = 30,family = 'Arial')) + 
 theme(axis.title.x = element_text(family = 'Arial'), axis.title.y = element_text(family = 'Arial')) + 
