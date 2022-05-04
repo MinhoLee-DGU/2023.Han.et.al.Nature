@@ -1,5 +1,4 @@
 ## whole cluster analysis
-```{r}
 library(dplyr)
 library(Seurat)
 library(patchwork)
@@ -266,4 +265,3 @@ geom_boxplot(width = 0.1) + theme_bw() + stat_compare_means(label.y = 0.32,label
 theme(plot.title = element_text(size = 20,family = 'Arial'), legend.text = element_text(size = 20,family = 'Arial')) + 
 theme(axis.title.x = element_text(size = 20,family = 'Arial'), axis.title.y = element_text(size = 20,family = 'Arial')) + 
 theme(axis.text.x = element_text(angle = 40, hjust = 1,size = 20, family = 'Arial'), axis.text.y = element_text(size = 20,family = 'Arial')) + NoLegend() + ylab('ISR score')
-```
