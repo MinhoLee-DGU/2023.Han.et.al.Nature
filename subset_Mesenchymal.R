@@ -46,7 +46,7 @@ mes.genes <- rownames(han_mes)
 han_mes <- ScaleData(han_mes, features = mes.genes)
 mes_marker = c('Postn','Cox4i2','Gucy1a1','Pdgfrb','Notch3','Acta2','Tagln','Myh11','Actc1', 'Pi16','Serpinf1','Clec3b','Ccl11','Twist2','Wnt2','Tcf21','Npnt','Pdgfra','Vegfa','Bmp3','Gyg','Ces1d','Timp1','Sfrp1','Runx1','Chl1','Cp','Hhip','Cdh4','Wnt5a','Fgf18','Aspn','Lgr5','Lgr6','Tgfbi')
 color = rep(c('#C785C8','#7A297B','#60C5F1','#007AAE','#F58F9D','#E59560','#FBBD80','#008A69'),c(1,7,5,8,5,1,3,5))
-DoHeatmap(han_mes, features=mes_marker, slot = 'scale.data', assay='SCT', group.by='chart', group.colors=c('#008A69','#FBBD80','#E59560','#F58F9D','#007AAE','#60C5F1','#7A297B', '#C785C8')) +
+DoHeatmap(han_mes, features=mes_marker, slot = 'scale.data', assay='SCT', group.by='chart', group.colors=c('#008A69','#FBBD80','#E59560','#F58F9D','#007AAE','#60C5F1','#7A297B', '#C785C8')) +
 theme(plot.title = element_text(size = 20,family = 'Arial'), legend.text = element_text(size = 15,family = 'Arial')) + 
 theme(axis.title.y = element_text(family = 'Arial')) + 
 theme(axis.text.y = element_text(family = 'Arial',color=color))
