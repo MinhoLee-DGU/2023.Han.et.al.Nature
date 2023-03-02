@@ -265,3 +265,54 @@ geom_boxplot(width = 0.1) + theme_bw() + stat_compare_means(label.y = 0.32,label
 theme(plot.title = element_text(size = 20,family = 'Arial'), legend.text = element_text(size = 20,family = 'Arial')) + 
 theme(axis.title.x = element_text(size = 20,family = 'Arial'), axis.title.y = element_text(size = 20,family = 'Arial')) + 
 theme(axis.text.x = element_text(angle = 40, hjust = 1,size = 20, family = 'Arial'), axis.text.y = element_text(size = 20,family = 'Arial')) + NoLegend() + ylab('ISR score')
+
+## subset Mki67+ cells
+my.matrix = GetAssayData(object = whole, slot = "counts", assay='SCT')
+my.matrix = my.matrix %>% t %>% as.data.frame
+mki_cells = filter(my.matrix, Mki67 > 0) %>% rownames()
+
+
+## whole cluster heatmap
+whole.genes <- rownames(whole)
+whole <- ScaleData(whole, features = whole.genes)
+marker = c('Sftpc','Sftpa1','Sftpb','Lamp3','Sftpd','Lyz2',
+           'Krt8','Krt18','Atf5','Cdkn1a',
+           'Hopx','Aqp5','Vegfa','Col4a3',
+           'Scgb1a1','Scgb3a2','Dynlrb2','Foxj1','Tubb4b',
+           'Inmt','Col3a1','Pdgfra',
+           'Col1a1','Col1a2','Timp1','Hhip','Sfrp1',
+           'Gucy1a1','Cox4i2','Pdgfrb',
+           'Eln','Acta2','Tagln','Myh11',
+           'Upk3b','Sfrp2','Msln',
+           'Cd93','Ptprb','Gpihbp1','Kit',
+           'Ednrb','Kdr','Car4',
+           'Cxcl12','Vwf',
+           'Ccl21a','Mmrn1','Nrp2','Flt4','Prss23',
+           'Igkc','Cd79a','Ly6d','Ms4a1','Cd74',
+           'Ms4a4b','Cd3d','Cd3g',
+           'Cd8b1','Ly6c2',
+           'Trbc2','Trbc1','S100a10','AW112010',
+           'S100a9','S100a8','Retnlg','Ifitm1','Csf3r','Cxcr2',
+           'Plac8','Ifitm3','S100a4','Ifi27l2a','Ccr2',
+           'Pou2f2','Cx3cr1','Csf1r',
+           'Chil3','Ctsd','Plet1','Lpl','Atp6v0d2',
+           'C1qa','C1qb','C1qc','Apoe','Pf4',
+           'Mki67','Top2a',
+           'Cst3','H2-Ab1','H2-Eb1','H2-Aa',
+           'Mgl2','Cd209a',
+           'Ccl5','Fscn1','Ccr7','Traf1',
+           'Gzma','Nkg7','Klrd1',
+           'Il7r','Cxcr6')
+color = rep(c('#DAAADB','#C785C8','#7A297B','#A349A4','#7030A0','#511252','#0010FF','#8389E0','#3F48CC','#232B99','#101566','#60C5F1','#00A2E8','#0070C0','#007AAE','#005174','#6BD089','#52AC6D','#138535','#085820','#FFB27D','#9F9700','#BFB500','#A89F00','#807900','#F8A1A4','#F47378','#B21016','#77070B'),c(2,3,4,0,2,4,2,5,5,3,5,6,4,2,3,5,5,2,3,4,3,4,3,5,3,5,4,4,6))
+DoHeatmap(whole, features=marker, slot = 'scale.data', assay='SCT', group.by='chart', group.colors=c('#77070B','#B21016','#F47378','#F8A1A4','#807900','#A89F00','#BFB500','#9F9700','#FFB27D','#085820','#138535','#52AC6D','#6BD089','#005174','#007AAE','#0070C0','#00A2E8','#60C5F1','#101566','#232B99','#3F48CC','#8389E0','#0010FF','#511252','#7030A0','#A349A4','#7A297B','#C785C8','#DAAADB')) +
+theme(plot.title = element_text(size = 20,family = 'Arial'), legend.text = element_text(size = 20,family = 'Arial')) + 
+theme(axis.title.y = element_text(family = 'Arial')) + 
+theme(axis.text.y = element_text(family = 'Arial',color=color))
+ggsave(path = './', device='tiff', dpi=1000, filename='heatmap.tiff')
+dev.off()
+
+
+
+
+
+
