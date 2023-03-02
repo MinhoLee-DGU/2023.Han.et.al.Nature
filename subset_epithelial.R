@@ -111,7 +111,7 @@ saveRDS(epi, '../epi.rds')
 
 ##Epithelium
 p = DimPlot(epi, cols=c('#008A69','#FBBD80','#E59560','#BDD7EE','#5DA6E8', '#F58F9D','#3D49C8', '#A04AA4', '#808080'), group = 'epi_celltype')
-LabelClusters(p,family = 'Arial', repel = T, size = 5, id = 'chart2') +
+LabelClusters(p,family = 'Arial', repel = T, size = 5, id = 'epi_celltype') +
 theme(plot.title = element_text(family = 'Arial'), legend.text = element_text(size=20,family = 'Arial')) + 
 theme(axis.title.x = element_text(family = 'Arial'), axis.title.y = element_text(family = 'Arial')) + 
 theme(axis.text.x = element_text( family = 'Arial'), axis.text.y = element_text(family = 'Arial')) +
