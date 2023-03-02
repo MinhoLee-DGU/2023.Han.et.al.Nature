@@ -267,7 +267,7 @@ theme(axis.title.x = element_text(size = 20,family = 'Arial'), axis.title.y = el
 theme(axis.text.x = element_text(angle = 40, hjust = 1,size = 20, family = 'Arial'), axis.text.y = element_text(size = 20,family = 'Arial')) + NoLegend() + ylab('ISR score')
 
 ## subset Mki67+ cells
-my.matrix = GetAssayData(object = whole, slot = "counts", assay='SCT')
+my.matrix = GetAssayData(object = whole, slot = "data", assay='SCT')
 my.matrix = my.matrix %>% t %>% as.data.frame
 mki_cells = filter(my.matrix, Mki67 > 0) %>% rownames()
 
