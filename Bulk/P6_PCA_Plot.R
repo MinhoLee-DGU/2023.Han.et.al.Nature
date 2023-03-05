@@ -1,7 +1,7 @@
 library(DESeq2)
 library(tidyverse)
 library(ggrepel)
-library('edgeR')
+library(edgeR)
 
 
 ##PCA plot
