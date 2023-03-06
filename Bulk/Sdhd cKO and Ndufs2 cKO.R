@@ -57,7 +57,7 @@ isr_counts <- as.logical(abs(isr_sum)) %>%
   as.data.frame() %>% 
   dplyr::select(rownames(group_annot))
   
-isr = read.table('/home/young/isr.txt')
+isr = read.table('./Bulk/isr.txt')
 isr = isr$V1 %>% unique()
 isr_heatmap = isr_counts[isr,]
 isr_heatmap = na.omit(isr_counts)
