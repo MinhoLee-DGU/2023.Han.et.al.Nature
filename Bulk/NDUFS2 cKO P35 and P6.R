@@ -74,6 +74,8 @@ library('edgeR')
 class = colData$condition
 genes=mat$V1
 
+rownames(all_count) = genes
+
 
 y <- DGEList(counts=all_count, genes=genes, group=class)
 
