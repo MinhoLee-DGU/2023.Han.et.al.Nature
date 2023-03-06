@@ -14,15 +14,16 @@ rawdata %>% head
 rawdata = rawdata %>% as.matrix()
 batch = c(rep(1,30),rep(2,13))
 
-adjusted_counts <- ComBat_seq(rawdata, batch=batch, group=NULL, covar_mod=NULL)
+adjusted_counts = ComBat_seq(rawdata, batch=batch, group=NULL, covar_mod=NULL)
 write.table(adjusted_counts, "./nd_sd/adjusted_counts.tsv",sep = '\t', quote = F)
 
 
 
 ##Heatmap
 counts = fread("./nd_sd/adjusted_counts.tsv",sep = '\t')
-mat = counts
-rownames(mat) = counts$GeneID
+mat = counts %>% as.data.frame()
+rownames(mat) = mat$V1
+mat = mat[,-1]
 
 #only 'Sdhd Control','Sdhd cKO','Ndufs2 Control' and 'Ndufs2 cKO' sample
 sample_info = read.csv('./nd_sd/sample_info.csv')
@@ -31,16 +32,17 @@ mat = mat[,sample_info$Sample.name]
 
 class = factor(sample_info$Group, levels = c('Sdhd Control','Sdhd cKO','Ndufs2 Control','Ndufs2 cKO'))
 genes=rownames(mat)
+Sex = factor(sample_info$sex, levels=c('F','M'))
 
-y <- DGEList(counts=mat, genes=genes, group=class)
-y_filtered_norm <- calcNormFactors(y[filterByExpr(y),keep.lib.sizes = FALSE])
+y = DGEList(counts=mat, genes=genes, group=class)
+y_filtered_norm = calcNormFactors(y[filterByExpr(y),keep.lib.sizes = FALSE])
 
-dge_design <- model.matrix(~Sex + class)
-y_dsp <- estimateDisp(y_filtered_norm, dge_design, robust = TRUE)
-y_qlf_test <- glmQLFit(y_dsp, dge_design, robust = TRUE)
-y_qlf_test <- glmQLFTest(y_qlf_test)
+dge_design = model.matrix(~Sex + class)
+y_dsp = estimateDisp(y_filtered_norm, dge_design, robust = TRUE)
+y_qlf_test = glmQLFit(y_dsp, dge_design, robust = TRUE)
+y_qlf_test = glmQLFTest(y_qlf_test)
 
-group_annot <- sample_info %>% arrange(Group)
+group_annot = sample_info %>% arrange(Group)
 group_annot$Group = factor(group_annot$Group, levels = c('Sdhd Control','Sdhd cKO','Ndufs2 Control','Ndufs2 cKO'))
 group_annot$sex = factor(group_annot$sex, levels = c('F','M'))
 group_annot = group_annot[order(group_annot$Group, group_annot$sex),]
@@ -56,35 +58,9 @@ isr_counts <- as.logical(abs(isr_sum)) %>%
   edgeR::cpm(.) %>%
   as.data.frame() %>% 
   dplyr::select(rownames(group_annot))
-  
-isr = read.table('./Bulk/isr.txt')
-isr = isr$V1 %>% unique()
-isr_heatmap = isr_counts[isr,]
-isr_heatmap = na.omit(isr_counts)
 
-colors <- rev(colorRampPalette(RColorBrewer::brewer.pal(10, "RdBu"))(256))
-newnames <- lapply(isr,function(x) bquote(italic(.(x))))  
-pheatmap(isr_heatmap[,-c(29,30)],
-         annotation_col = dplyr::select(group_annot, c(Group,sex)),
-         annotation_colors = ann_colors,
-         cluster_cols = F,
-         cluster_rows = T,
-         clustering_distance_rows = "euclidean",
-         clustering_distance_cols = "euclidean",
-         show_rownames = T,
-         show_colnames = F,
-         fontsize = 14,
-         border_color = NA,
-         fontsize_row = 6,
-         family = 'Arial',
-         #breaks = seq(from=-2,to=2,length.out=100),
-         #labels_row = as.expression(newnames),
-         #cellwidth = 20, cellheight = 40,
-         gaps_col = c(6,13,21,28),
-         scale = 'row',
-         family = 'Arial',
-         color = colors)
- 
+#### Convert rownames of isr_counts to Gene Symbol !!!! ####
+
 Atf=isr_heatmap[c('Atf3','Atf4','Atf5','Atf6'),]
 newnames <- lapply(rownames(Atf),function(x) bquote(italic(.(x))))   
 
@@ -107,6 +83,36 @@ pheatmap(isr_heatmap[c('Atf3','Atf4','Atf5','Atf6'),],
          gaps_col = c(6,13,21,28),
          scale = 'row',
          color = colors)
+
+
+isr = read.table('./isr.txt')
+isr = isr$V1 %>% unique()
+isr_heatmap = isr_counts[isr,]
+isr_heatmap = na.omit(isr_counts)
+
+colors <- rev(colorRampPalette(RColorBrewer::brewer.pal(10, "RdBu"))(256))
+newnames <- lapply(isr,function(x) bquote(italic(.(x))))  
+pheatmap(isr_heatmap,
+         annotation_col = dplyr::select(group_annot, c(Group,sex)),
+         annotation_colors = ann_colors,
+         cluster_cols = F,
+         cluster_rows = T,
+         clustering_distance_rows = "euclidean",
+         clustering_distance_cols = "euclidean",
+         show_rownames = T,
+         show_colnames = F,
+         fontsize = 14,
+         border_color = NA,
+         fontsize_row = 6,
+         family = 'Arial',
+         #breaks = seq(from=-2,to=2,length.out=100),
+         #labels_row = as.expression(newnames),
+         #cellwidth = 20, cellheight = 40,
+         gaps_col = c(6,13,21,28),
+         scale = 'row',
+         family = 'Arial',
+         color = colors)
+ 
 
 
 
