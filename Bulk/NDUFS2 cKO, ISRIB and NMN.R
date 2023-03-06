@@ -2,6 +2,7 @@
 library(sva)
 library(dplyr)
 library(data.table)
+library(edgeR)
 
 raw_nd=read.table("./ndufs2_bulk/gene_read_counts_table_all_final.tsv", header=TRUE, stringsAsFactors=FALSE, row.names=1)
 raw_isrib=read.table("./isrib_bulk/gene_read_counts_table_all_final.tsv", header=TRUE, stringsAsFactors=FALSE, row.names=1)
@@ -21,13 +22,31 @@ library(pheatmap)
 library(viridis)
 
 counts = fread("./ndufs2_isrib_nmn/adjusted_counts.tsv",sep = '\t')
+counts = counts %>% as.data.frame()
+rownames(counts) = counts$V1
+counts = counts[,-1]
+
 sample_info = read.csv('./ndufs2_isrib_nmn/sample_info.csv')
+sample_info$Group[sample_info$Group == 'wt'] = 'WT'
+sample_info$Group[sample_info$Group == 'con'] = 'NDUFS2 control'
+sample_info$Group[sample_info$Group == 'con_isrib+'] = 'NDUFS2 control + ISRIB'
+sample_info$Group[sample_info$Group == 'con_nmn+'] = 'NDUFS2 control + NMN'
+sample_info$Group[sample_info$Group == 'con_nd_ndi+'] = 'NDUFS2 control/NDI1'
+sample_info$Group[sample_info$Group == 'ko'] = 'NDUFS2 cKO'
+sample_info$Group[sample_info$Group == 'ko_isrib+'] = 'NDUFS2 cKO + ISRIB'
+sample_info$Group[sample_info$Group == 'ko_nmn+'] = 'NDUFS2 cKO + NMN'
+sample_info$Group[sample_info$Group == 'ko_nd_ndi+'] = 'NDUFS2 cKO/NDI1'
+sample_info$Group[sample_info$Group == 'con_isrib'] = 'NDUFS2 control'
+sample_info$Group[sample_info$Group == 'con_nd'] = 'NDUFS2 control'
+sample_info$Group[sample_info$Group == 'con_nmn'] = 'NDUFS2 control'
+sample_info$Group[sample_info$Group == 'ko_isrib'] = 'NDUFS2 cKO'
+sample_info$Group[sample_info$Group == 'ko_nd'] = 'NDUFS2 cKO'
+sample_info$Group[sample_info$Group == 'ko_nmn'] = 'NDUFS2 cKO'
 
-all_count=mat
-library('edgeR')
-class = colData$condition
+all_count=counts
+class = factor(sample_info$Group, levels = c('WT','NDUFS2 control','NDUFS2 control + ISRIB','NDUFS2 control + NMN','NDUFS2 control/NDI1','NDUFS2 cKO','NDUFS2 cKO + ISRIB','NDUFS2 cKO + NMN','NDUFS2 cKO/NDI1'))
 genes=rownames(all_count)
-
+Sex = factor(sample_info$Sex, levels=c('F','M'))
 
 y = DGEList(counts=all_count, genes=genes, group=class)
 
@@ -56,7 +75,9 @@ isr_counts = as.logical(abs(isr_sum)) %>%
   y_filtered_norm[.,] %>%
   edgeR::cpm(.) %>%
   as.data.frame() %>% 
-  dplyr::select(rownames(group_annot)) 
+  dplyr::select(rownames(group_annot))
+
+#### Convert rownames of isr_counts to Gene Symbol !!!! ####
   
 Atf=isr_counts[c('Atf3','Atf4','Atf5','Atf6'),]
 newnames = lapply(rownames(Atf),function(x) bquote(italic(.(x))))   
@@ -104,9 +125,9 @@ pheatmap(isr_counts[c('Ndufs2'),],
          family = 'Arial',
          color = colors)
 
-isr = read.table('./Bulk/isr.txt')
+isr = read.table('./isr.txt')
 isr = isr$V1 %>% unique()
-isr_heatmap = isr_count[isr,]
+isr_heatmap = isr_counts[isr,]
 isr_heatmap = na.omit(isr_heatmap)
 
 newnames = lapply(isr,function(x) bquote(italic(.(x))))  
