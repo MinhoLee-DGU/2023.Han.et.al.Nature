@@ -105,6 +105,9 @@ isr_counts <- as.logical(abs(isr_sum)) %>%
  
 ann_colors = list(Group = c('P6 NDUFS2 control' = '#660010', 'P35 NDUFS2 control' = '#CF7C89', 'P6 NDUFS2 cKO' = '#007AAE', 'P35 NDUFS2 cKO' = '#94D8F6'),Sex = c('F' = '#818181', 'M' = '#C0BEBF'))
 
+
+#### Convert rownames of isr_counts to Gene Symbol !!!! ####
+
 Atf=isr_counts[c('Atf3','Atf4','Atf5','Atf6'),]
 newnames <- lapply(rownames(Atf),function(x) bquote(italic(.(x))))   
 colors <- rev(colorRampPalette(RColorBrewer::brewer.pal(10, "RdBu"))(256))
@@ -128,7 +131,7 @@ pheatmap(isr_counts[c('Atf3','Atf4','Atf5','Atf6'),],
          family = 'Arial',
          color = colors)
 
-isr = read.table('./Bulk/isr.txt')
+isr = read.table('./isr.txt')
 isr = isr$V1 %>% unique()
 isr_heatmap = isr_counts[isr,]
 isr_heatmap = na.omit(isr_heatmap)
