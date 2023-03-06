@@ -45,6 +45,8 @@ isr_counts = as.logical(abs(isr_sum)) %>%
   edgeR::cpm(.) %>%
   as.data.frame() %>% 
   dplyr::select(rownames(group_annot))
+
+#### Convert rownames of isr_counts to Gene Symbol !!!! ####
   
 Atf=isr_counts[c('Atf3','Atf4','Atf5','Atf6','Ddit3'),]
 newnames = lapply(rownames(Atf),function(x) bquote(italic(.(x))))   
@@ -69,7 +71,7 @@ pheatmap(isr_counts[c('Atf3','Atf4','Atf5','Atf6','Ddit3'),],
          color = colors)
 
 
-isr = read.table('.//isr.txt')
+isr = read.table('./isr.txt')
 isr = isr$V1 %>% unique()
 isr_heatmap = isr_counts[isr,]
 isr_heatmap = na.omit(isr_heatmap)
