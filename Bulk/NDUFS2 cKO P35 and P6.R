@@ -68,7 +68,6 @@ colData(rld)$label = rld@colData$condition
 p + theme(legend.position='bottom') + guides(color = guide_legend(nrow = 2, byrow = T, override.aes = list(size=10)))
 
 ##Heatmap
-table %>% head
 all_count=mat[,sample_info$Sample.name]
 
 library('edgeR')
