@@ -88,7 +88,7 @@ pheatmap(isr_heatmap[c('Atf3','Atf4','Atf5','Atf6'),],
 isr = read.table('./isr.txt')
 isr = isr$V1 %>% unique()
 isr_heatmap = isr_counts[isr,]
-isr_heatmap = na.omit(isr_counts)
+isr_heatmap = na.omit(isr_heatmap)
 
 colors <- rev(colorRampPalette(RColorBrewer::brewer.pal(10, "RdBu"))(256))
 newnames <- lapply(isr,function(x) bquote(italic(.(x))))  
@@ -99,7 +99,7 @@ pheatmap(isr_heatmap,
          cluster_rows = T,
          clustering_distance_rows = "euclidean",
          clustering_distance_cols = "euclidean",
-         show_rownames = T,
+         show_rownames = F,
          show_colnames = F,
          fontsize = 14,
          border_color = NA,
