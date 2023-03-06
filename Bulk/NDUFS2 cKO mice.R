@@ -9,6 +9,11 @@ library(data.table)
 rawdata=read.table("./ndufs2_bulk/gene_read_counts_table_all_final.tsv", header=TRUE, stringsAsFactors=FALSE, row.names=1)
 sample_info = read.csv("./ndufs2_bulk/sample_info.csv")
 
+sample_info$Group[sample_info$Group == 'con_nd'] = 'NDUFS2 control'
+sample_info$Group[sample_info$Group == 'con_nd_ndi+'] = 'NDUFS2 control/NDI1'
+sample_info$Group[sample_info$Group == 'ko_nd'] = 'NDUFS2 cKO'
+sample_info$Group[sample_info$Group == 'ko_nd_ndi+'] = 'NDUFS2 cKO/NDI1'
+
 class = factor(sample_info$Group, levels = c('NDUFS2 control','NDUFS2 control/NDI1','NDUFS2 cKO','NDUFS2 cKO/NDI1'))
 sex = factor(sample_info$Sex, levels = c('F', 'M'))
 
