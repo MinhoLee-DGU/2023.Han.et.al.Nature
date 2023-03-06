@@ -65,7 +65,7 @@ pheatmap(isr_counts[c('Atf3','Atf4','Atf5','Atf6','Ddit3'),],
          color = colors)
 
 
-isr = read.table('/home/young/isr.txt')
+isr = read.table('.//isr.txt')
 isr = isr$V1 %>% unique()
 isr_heatmap = isr_counts[isr,]
 isr_heatmap = na.omit(isr_heatmap)
