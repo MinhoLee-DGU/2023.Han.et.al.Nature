@@ -104,7 +104,7 @@ pheatmap(isr_counts[c('Ndufs2'),],
          family = 'Arial',
          color = colors)
 
-isr = read.table('/home/young/isr.txt')
+isr = read.table('./Bulk/isr.txt')
 isr = isr$V1 %>% unique()
 isr_heatmap = isr_count[isr,]
 isr_heatmap = na.omit(isr_heatmap)
