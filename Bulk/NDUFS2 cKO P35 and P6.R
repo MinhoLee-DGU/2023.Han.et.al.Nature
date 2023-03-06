@@ -16,7 +16,7 @@ rawdata %>% head
 rawdata = rawdata %>% as.matrix()
 batch = c(rep(1,30),rep(2,12))
 
-adjusted_counts <- ComBat_seq(rawdata, batch=batch, group=NULL, covar_mod=NULL)
+adjusted_counts = ComBat_seq(rawdata, batch=batch, group=NULL, covar_mod=NULL)
 write.table(adjusted_counts, "./nd_p6/adjusted_counts.tsv",sep = '\t', quote = F)
 
 
@@ -26,7 +26,7 @@ counts = fread("./nd_p6/adjusted_counts.tsv" ,sep = '\t')
 mat = counts
 mat = mat %>% as.data.frame()
 rownames(mat) = counts$GeneID
-colData <- as.data.frame(colnames(mat))
+colData = as.data.frame(colnames(mat))
 
 sample_info = read.csv('./nd_p6/sample_info_nd_p6.csv')
 sample_info = filter(sample_info, Group == 'ko_nd' | Group == 'Control' | Group == 'KO' | Group == 'con_nd')
@@ -36,15 +36,15 @@ sample_info$Group[sample_info$Group == 'Control'] = 'P6 NDUFS2 control'
 sample_info$Group[sample_info$Group == 'KO'] = 'P6 NDUFS2 cKO'
 sample_info$Group[sample_info$Group == 'con_nd'] = 'P35 NDUFS2 control'
 
-colData <- as.data.frame(colnames(mat[,sample_info$Sample.name]))
+colData = as.data.frame(colnames(mat[,sample_info$Sample.name]))
 
 colData$condition = factor(sample_info$Group, levels = c('P6 NDUFS2 control','P35 NDUFS2 control','P6 NDUFS2 cKO','P35 NDUFS2 cKO'))
-colnames(colData) <- c("colData", "condition")
+colnames(colData) = c("colData", "condition")
 ddsMat = DESeqDataSetFromMatrix(countData = mat[,sample_info$Sample.name], colData = colData, design = ~condition)
 
-keep <- rowSums(counts(ddsMat)) >= 10
-dds <- ddsMat[keep,]
-dds <- DESeq(dds)
+keep = rowSums(counts(ddsMat)) >= 10
+dds = ddsMat[keep,]
+dds = DESeq(dds)
 rld = dds %>% rlog()
 DESeq2::plotPCA(rld,intgroup=c("condition"))
 
@@ -77,14 +77,14 @@ genes=mat$V1
 rownames(all_count) = genes
 
 
-y <- DGEList(counts=all_count, genes=genes, group=class)
+y = DGEList(counts=all_count, genes=genes, group=class)
 
-y_filtered_norm <- calcNormFactors(y[filterByExpr(y),keep.lib.sizes = FALSE])
+y_filtered_norm = calcNormFactors(y[filterByExpr(y),keep.lib.sizes = FALSE])
 
-dge_design <- model.matrix(~Sex + class)
-y_dsp <- estimateDisp(y_filtered_norm, dge_design, robust = TRUE)
-y_qlf_test <- glmQLFit(y_dsp, dge_design, robust = TRUE)
-y_qlf_test <- glmQLFTest(y_qlf_test)
+dge_design = model.matrix(~Sex + class)
+y_dsp = estimateDisp(y_filtered_norm, dge_design, robust = TRUE)
+y_qlf_test = glmQLFit(y_dsp, dge_design, robust = TRUE)
+y_qlf_test = glmQLFTest(y_qlf_test)
 
 sample_info$Group = factor(sample_info$Group, levels = c('P6 NDUFS2 control','P35 NDUFS2 control','P6 NDUFS2 cKO','P35 NDUFS2 cKO'))
 sample_info$Sex = factor(sample_info$Sex, levels = c('F','M'))
@@ -95,9 +95,9 @@ group_annot = group_annot[order(group_annot$Group, group_annot$Sex),]
 rownames(group_annot) = group_annot$Sample.name
 group_annot = group_annot[,-1]
 
-isr_sum <- decideTests(y_qlf_test, p.value = 1)
+isr_sum = decideTests(y_qlf_test, p.value = 1)
 
-isr_counts <- as.logical(abs(isr_sum)) %>%
+isr_counts = as.logical(abs(isr_sum)) %>%
   y_filtered_norm[.,] %>%
   edgeR::cpm(.) %>%
   as.data.frame() %>% 
@@ -109,8 +109,8 @@ ann_colors = list(Group = c('P6 NDUFS2 control' = '#660010', 'P35 NDUFS2 control
 #### Convert rownames of isr_counts to Gene Symbol !!!! ####
 
 Atf=isr_counts[c('Atf3','Atf4','Atf5','Atf6'),]
-newnames <- lapply(rownames(Atf),function(x) bquote(italic(.(x))))   
-colors <- rev(colorRampPalette(RColorBrewer::brewer.pal(10, "RdBu"))(256))
+newnames = lapply(rownames(Atf),function(x) bquote(italic(.(x))))   
+colors = rev(colorRampPalette(RColorBrewer::brewer.pal(10, "RdBu"))(256))
 pheatmap(isr_counts[c('Atf3','Atf4','Atf5','Atf6'),],
          annotation_col = dplyr::select(group_annot, c(Group,Sex)),
          annotation_colors = ann_colors,
@@ -135,7 +135,7 @@ isr = read.table('./isr.txt')
 isr = isr$V1 %>% unique()
 isr_heatmap = isr_counts[isr,]
 isr_heatmap = na.omit(isr_heatmap)
-newnames <- lapply(isr,function(x) bquote(italic(.(x))))  
+newnames = lapply(isr,function(x) bquote(italic(.(x))))  
 pheatmap(isr_heatmap,
          annotation_col = dplyr::select(group_annot, c(Group,Sex)),
          annotation_colors = ann_colors,
