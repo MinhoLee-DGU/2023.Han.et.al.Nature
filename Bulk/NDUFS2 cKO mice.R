@@ -30,7 +30,6 @@ y_qlf_test <- glmQLFTest(y_qlf_test)
 sample_info$Sex = factor(sample_info$Sex, levels = c('F','M'))
 sample_info$Group = factor(sample_info$Group, levels = c('NDUFS2 control','NDUFS2 control/NDI1','NDUFS2 cKO','NDUFS2 cKO/NDI1'))
 
-reg_sum <- decideTests(y_qlf_test)
 group_annot <- sample_info %>% arrange(Group)
 group_annot = group_annot[order(group_annot$Group, group_annot$Sex),]
 
