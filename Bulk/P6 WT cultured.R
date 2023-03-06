@@ -7,7 +7,6 @@ library(pheatmap)
 library(viridis)
 
 
-dir = './p6_wt_bulk'
 sample_info = read.csv('./p6_wt_bulk/sample_info_p6_wt.csv')
 rawdata=read.table("./p6_wt_bulk/gene_read_counts_table_all_final.tsv", header=TRUE, stringsAsFactors=FALSE, row.names=1)
 
@@ -47,6 +46,8 @@ isr_counts = as.logical(abs(isr_sum)) %>%
   edgeR::cpm(.) %>%
   as.data.frame() %>% 
   dplyr::select(rownames(group_annot))
+
+#### Convert rownames of isr_counts to Gene Symbol !!!! ####
   
 scmar = isr_counts[c('Mki67','Cdkn1a','Krt8','Krt18','Krt7','Krt19','Sftpc','Lyz2','Sftpd','Sftpb','Abca3','Aqp5','Hopx','Vegfa'),]
 newnames = lapply(rownames(scmar),function(x) bquote(italic(.(x)))) 
