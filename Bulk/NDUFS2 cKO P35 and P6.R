@@ -23,8 +23,8 @@ write.table(adjusted_counts, "./nd_p6/adjusted_counts.tsv",sep = '\t', quote = F
 ##PCA plot
 counts = fread("./nd_p6/adjusted_counts.tsv" ,sep = '\t')
 
-mat = mat %>% as.data.frame()
 mat = counts
+mat = mat %>% as.data.frame()
 rownames(mat) = counts$GeneID
 colData <- as.data.frame(colnames(mat))
 
