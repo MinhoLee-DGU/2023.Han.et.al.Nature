@@ -60,6 +60,7 @@ isr_counts <- as.logical(abs(isr_sum)) %>%
   dplyr::select(rownames(group_annot))
 
 #### Convert rownames of isr_counts to Gene Symbol !!!! ####
+isr_heatmap = isr_counts # isr_counts rownames changed to the genetic symbols 
 
 Atf=isr_heatmap[c('Atf3','Atf4','Atf5','Atf6'),]
 newnames <- lapply(rownames(Atf),function(x) bquote(italic(.(x))))   
