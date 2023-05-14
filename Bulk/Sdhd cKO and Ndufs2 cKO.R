@@ -88,7 +88,7 @@ pheatmap(isr_heatmap[c('Atf3','Atf4','Atf5','Atf6'),],
 
 isr = read.table('./isr.txt')
 isr = isr$V1 %>% unique()
-isr_heatmap = isr_counts[isr,]
+isr_heatmap = isr_heatmap[isr,]
 isr_heatmap = na.omit(isr_heatmap)
 
 colors <- rev(colorRampPalette(RColorBrewer::brewer.pal(10, "RdBu"))(256))
