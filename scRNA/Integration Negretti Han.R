@@ -76,38 +76,12 @@ seurat = AddMetaData(seurat, metadata = as.data.frame(u.scores))
 
 #subset transitional cells
 seurat_tran = subset(seurat, idents = 'Transitional')
+seurat_tran@meta.data$tmp = paste0(seurat@meta.data$state,'_',seurat@meta.data$epi_celltype)
+seurat_tran = subset(seurat, subset=tmp!=c('NDUFS2 cont_Transitional'))
 ggplot(seurat_tran@meta.data, aes(x = project, y = ISR_UCell)) + 
 geom_violin(aes(fill = project), scale = "width") + geom_boxplot(width = 0.1) + theme_bw() + stat_compare_means(label.y = 0.35, label.x = 0.6, size = 5, family = 'Arial') +
 theme(plot.title = element_text(size = 20,family = 'Arial'), legend.text = element_text(size = 20,family = 'Arial')) + 
 theme(axis.title.x = element_text(size = 20,family = 'Arial'), axis.title.y = element_text(size = 20,family = 'Arial')) + 
 theme(axis.text.x = element_text(size = 20,family = 'Arial'), axis.text.y = element_text(size = 20,family = 'Arial')) +
 theme(legend.title = element_blank()) + NoLegend() + ggtitle('') + ylab('ISR Score') + xlab('')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
