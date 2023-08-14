@@ -15,14 +15,14 @@ SHH7 : NDUFS2 control male2
 SHH8 : NDUFS2 cKO male2
 
 #### Align onto GRCm39 reference genome with tdTomato gene inserted
-cellranger count --id=SHH1 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH1 --sample=SHH1 --transcriptome=../tdTomato_GRCm39/
-cellranger count --id=SHH2 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH2 --sample=SHH2 --transcriptome=../tdTomato_GRCm39/
-cellranger count --id=SHH3 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH3 --sample=SHH3 --transcriptome=../tdTomato_GRCm39/
-cellranger count --id=SHH4 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH4 --sample=SHH4 --transcriptome=../tdTomato_GRCm39/
-cellranger count --id=SHH5 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH5 --sample=SHH5 --transcriptome=../tdTomato_GRCm39/
-cellranger count --id=SHH6 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH6 --sample=SHH6 --transcriptome=../tdTomato_GRCm39/
-cellranger count --id=SHH7 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH7 --sample=SHH7 --transcriptome=../tdTomato_GRCm39/
-cellranger count --id=SHH8 --fastqs=../outs/fastq_path/HM3JNBBXY/SHH8 --sample=SHH8 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH1 --fastqs=../outs/fastq_path/SHH1 --sample=SHH1 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH2 --fastqs=../outs/fastq_path/SHH2 --sample=SHH2 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH3 --fastqs=../outs/fastq_path/SHH3 --sample=SHH3 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH4 --fastqs=../outs/fastq_path/SHH4 --sample=SHH4 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH5 --fastqs=../outs/fastq_path/SHH5 --sample=SHH5 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH6 --fastqs=../outs/fastq_path/SHH6 --sample=SHH6 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH7 --fastqs=../outs/fastq_path/SHH7 --sample=SHH7 --transcriptome=../tdTomato_GRCm39/
+cellranger count --id=SHH8 --fastqs=../outs/fastq_path/SHH8 --sample=SHH8 --transcriptome=../tdTomato_GRCm39/
 
 ### scrublet python code (SHH1 - SHH8)
 import sys
